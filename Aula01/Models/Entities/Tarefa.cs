@@ -1,5 +1,7 @@
 ﻿
- namespace Aula01.Models.Entities
+using Aula01.Models.DTOs;
+
+namespace Aula01.Models.Entities
 {
     public class Tarefa
     {
@@ -14,5 +16,10 @@
         public DateTime CriadaEm { get; set; } = DateTime.UtcNow;
 
         public DateTime AtualizadaEm { get; set; }
+
+        internal void ApplyUpdate(TarefaUpdate dto)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
