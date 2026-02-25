@@ -1,7 +1,8 @@
-using System.Security.Authentication.ExtendedProtection;
 using Aula01.Data;
 using Aula01.Services;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,14 +25,45 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 builder.Services.AddScoped<TarefaService>();
 
+//Customizar os Data Annotations
+
+builder.Services.Configure<ApiBehaviorOptions>(options =>
+{
+    options.InvalidModelStateResponseFactory = context =>
+    {
+        var errors = context.ModelState
+            .Where(e => e.Value?.Errors.Count > 0)
+            .ToDictionary(
+                k => k.Key,
+                v => v.Value!.Errors
+                    .Select(e => e.ErrorMessage)
+                    .ToArray()
+            );
+
+        return new BadRequestObjectResult(new
+        {
+            Message = "Erro de validação",
+            Errors = errors
+        });
+    };
+});
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+
+    app.MapScalarApiReference(options =>
+    {
+        options
+            .WithTitle("Api - To Do List")
+            .WithTheme(ScalarTheme.Moon)
+            .WithDefaultHttpClient(ScalarTarget.CSharp, ScalarClient.HttpClient);
+    });
 }
+
+app.UseCors("DevCors");
 
 app.UseHttpsRedirection();
 
@@ -40,3 +72,5 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+
