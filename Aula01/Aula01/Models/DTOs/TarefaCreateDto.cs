@@ -7,7 +7,7 @@ namespace Aula01.Models.DTOs
         [Required, MinLength(3), MaxLength(80)]
         public string Titulo { get; set; } = "";
 
-        [MaxLength(100)]
+        [MaxLength(200)]
         public string? Descricao { get; set; }
     }
 }

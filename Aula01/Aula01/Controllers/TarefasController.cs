@@ -1,11 +1,12 @@
-
-using Aula01.Models.DTOs;
+﻿using Aula01.Models.DTOs;
 using Aula01.Services;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using System.Reflection.Metadata.Ecma335;
 
 namespace Aula01.Controllers
 {
-
     [Route("api/[controller]")]
     [ApiController]
     public class TarefasController : ControllerBase
@@ -30,36 +31,36 @@ namespace Aula01.Controllers
             var tarefa = await _service.GetByIdAsync(id);
             if (tarefa is null)
                 return NotFound(new { message = "Tarefa não encontrada" });
+
             return Ok(tarefa.ToResponse());
         }
 
         [HttpPost]
-
         public async Task<IActionResult> Create([FromBody] TarefaCreateDto dto)
         {
             var created = await _service.CreateAsync(dto.ToEntity());
-            return CreatedAtAction(nameof(GetById), new { id = created }, created.ToResponse() );
+            return CreatedAtAction(nameof(GetById), new { id = created.Id }, created.ToResponse());
         }
 
         [HttpPut("{id:guid}")]
-        public async Task<IActionResult> Update(Guid id, [FromBody] TarefaUpdate dto)
+        public async Task<IActionResult> Update(Guid id, TarefaUpdate dto)
         {
+            // MUDANÇA: O 'ApplyUpdate' agora é chamado dentro de uma expressão lambda.
+            // Isso mantém o seu método de Service original (Action<Tarefa>) funcionando!
             var ok = await _service.UpdateAsync(id, tarefa => tarefa.ApplyUpdate(dto));
-            if (!ok ) 
-                return NotFound(new { message = "Tarefa não encontrada" });
-            return NoContent();
+
+            // RESPOSTA: 204 (NoContent) para sucesso ou 404 para erro
+            return ok ? NoContent() : NotFound();
         }
 
         [HttpDelete("{id:guid}")]
         public async Task<IActionResult> Delete (Guid id)
         {
             var tarefa = await _service.DeleteAsync(id);
-            if (!tarefa ) 
-                return NotFound(new { message = "Tarefa não encontrada" });
+            if (!tarefa) return NotFound(new { message = "Tarefa não encontrada." });
+
             return NoContent();
         }
 
     }
 }
-
-/* estrututurando cors e o controller */

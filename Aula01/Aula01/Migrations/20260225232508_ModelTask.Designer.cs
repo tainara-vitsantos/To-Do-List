@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Aula01.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260225231957_ModelTask")]
+    [Migration("20260225232508_ModelTask")]
     partial class ModelTask
     {
         /// <inheritdoc />

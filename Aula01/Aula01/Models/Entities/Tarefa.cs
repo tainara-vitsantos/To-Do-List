@@ -1,13 +1,13 @@
-﻿
-using Aula01.Models.DTOs;
+﻿using Aula01.Models.DTOs;
 
 namespace Aula01.Models.Entities
 {
+
     public class Tarefa
     {
         public Guid Id { get; set; }
 
-        public required string Titulo { get; set; }
+        public string Titulo { get; set; }
 
         public string? Descricao { get; set; }
 
@@ -17,9 +17,8 @@ namespace Aula01.Models.Entities
 
         public DateTime AtualizadaEm { get; set; }
 
-        internal void ApplyUpdate(TarefaUpdate dto)
-        {
-            throw new NotImplementedException();
-        }
+        public Guid  UsuarioId { get; set; }
+
+        public Usuario? Usuario { get; set; }
     }
 }

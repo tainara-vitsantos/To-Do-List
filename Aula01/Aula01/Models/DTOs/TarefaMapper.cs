@@ -12,7 +12,7 @@ namespace Aula01.Models.DTOs
             Concluida = t.Concluida,
             //UsuarioId = t.UsuarioId
             CriadaEm = t.CriadaEm,
-            AtualizadaEm = t.AtualizadaEm
+            AtualizadaEm = t.AtualizadaEm,
         };
 
         public static void ApplyUpdate(this Tarefa entity, TarefaUpdate dto)
@@ -25,12 +25,10 @@ namespace Aula01.Models.DTOs
 
         public static Tarefa ToEntity(this TarefaCreateDto dto) => new()
         {
-        
             Titulo = dto.Titulo.Trim(),
             Descricao = dto.Descricao?.Trim(),
             Concluida = false,
-            CriadaEm = DateTime.UtcNow,
-            
+            CriadaEm = DateTime.UtcNow
         };
     }
 }

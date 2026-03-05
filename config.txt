@@ -1,2 +1,6 @@
 git config --global user.name "Tainara Santos"
 git config --global user.email "tainaravit.santos28@gmail.com"
+
+dotnet ef database update
+
+dotnet run

@@ -1,11 +1,8 @@
-﻿using System;
-
-namespace Aula01.Models.DTOs
+﻿namespace Aula01.Models.DTOs
 {
     public class TarefaResponse
     {
         public Guid Id { get; set; }
-
         public string Titulo { get; set; } = "";
 
         public bool Concluida { get; set; }

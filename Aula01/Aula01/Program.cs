@@ -9,23 +9,24 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 builder.Services.AddControllers();
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
+
 builder.Services.AddOpenApi();
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("DevCors", policy =>
+    options.AddPolicy("DevCors", policy => 
         policy.AllowAnyOrigin()
-               .AllowAnyHeader()
-               .AllowAnyMethod());
+              .AllowAnyHeader()
+              .AllowAnyMethod());
 });
 
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"),
+    sqlOptions => sqlOptions.EnableRetryOnFailure()));
 
 builder.Services.AddScoped<TarefaService>();
 
-//Customizar os Data Annotations
+// Customizar os Data Annotations
 
 builder.Services.Configure<ApiBehaviorOptions>(options =>
 {
@@ -35,15 +36,12 @@ builder.Services.Configure<ApiBehaviorOptions>(options =>
             .Where(e => e.Value?.Errors.Count > 0)
             .ToDictionary(
                 k => k.Key,
-                v => v.Value!.Errors
-                    .Select(e => e.ErrorMessage)
-                    .ToArray()
+                v => v.Value!.Errors.Select(e => e.ErrorMessage).ToArray()
             );
-
         return new BadRequestObjectResult(new
         {
-            Message = "Erro de validação",
-            Errors = errors
+            message = "Falha de valida��o.",
+            errors
         });
     };
 });
@@ -56,21 +54,19 @@ if (app.Environment.IsDevelopment())
 
     app.MapScalarApiReference(options =>
     {
-        options
-            .WithTitle("Api - To Do List")
-            .WithTheme(ScalarTheme.Moon)
-            .WithDefaultHttpClient(ScalarTarget.CSharp, ScalarClient.HttpClient);
+        options.WithTitle("Api - To Do List")
+               .WithTheme(ScalarTheme.Moon)
+               .WithDefaultHttpClient(ScalarTarget.CSharp, ScalarClient.HttpClient);
     });
+
 }
 
 app.UseCors("DevCors");
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
 app.MapControllers();
 
 app.Run();
-
-
